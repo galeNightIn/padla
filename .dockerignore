@@ -1,0 +1,10 @@
+node_modules
+dist
+.astro
+.git
+.github
+*.md
+!src/content/**/*.md
+.gitignore
+.dockerignore
+README.md
