@@ -1,0 +1,129 @@
+:root {
+  /* System font stacks only — nothing is downloaded. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --fg: #1a1a1a;
+  --bg: #ffffff;
+  --muted: #666;
+  --accent: #0b65c2;
+  --border: #e5e5e5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #e6e6e6;
+    --bg: #111315;
+    --muted: #9aa0a6;
+    --accent: #5aa9f0;
+    --border: #2a2d30;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--fg);
+  background: var(--bg);
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+header.site {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--border);
+}
+
+header.site a.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+  color: var(--fg);
+}
+
+a {
+  color: var(--accent);
+}
+
+h1 {
+  line-height: 1.2;
+  margin: 0.2em 0 0.1em;
+}
+
+time {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+ul.posts {
+  list-style: none;
+  padding: 0;
+}
+
+ul.posts li {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+ul.posts h2 {
+  margin: 0 0 0.2rem;
+  font-size: 1.2rem;
+}
+
+ul.posts a {
+  text-decoration: none;
+}
+
+ul.posts p {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+}
+
+/* Code — system monospace, no web fonts. */
+code,
+kbd,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+:not(pre) > code {
+  background: rgba(127, 127, 127, 0.15);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+}
+
+/* Shiki output. The inline colors come from the build-time theme;
+   we only control layout/scroll here. */
+pre.astro-code {
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  line-height: 1.5;
+  border: 1px solid var(--border);
+}
+
+pre.astro-code code {
+  background: none;
+  padding: 0;
+}
