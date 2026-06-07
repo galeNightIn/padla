@@ -4,9 +4,10 @@ A fast, static blog. **No web fonts** (system font stack only), **no client-side
 JavaScript**, and code snippets are **syntax-highlighted at build time** so the
 browser does zero rendering work for them.
 
-Built with [Astro](https://astro.build) + [Shiki](https://shiki.style), served
-as static files by nginx in a tiny Docker image, deployed to a DigitalOcean
-droplet automatically on every merge to `master`.
+Built with [Astro](https://astro.build) + [Shiki](https://shiki.style) and
+deployed to **GitHub Pages** automatically on every merge to `master`.
+
+Live at: https://galenightin.github.io/padla/
 
 ## Writing a post
 
@@ -34,60 +35,38 @@ npm run build    # outputs static site to ./dist
 
 ## How deploy works
 
-On push to `master`, `.github/workflows/deploy.yml`:
+On push to `master`, `.github/workflows/deploy.yml` runs `astro build` and
+publishes `./dist` to GitHub Pages. No secrets, no servers — Pages serves the
+static files over HTTPS for free.
 
-1. Builds the Docker image (Astro build → nginx) and pushes it to the GitHub
-   Container Registry (GHCR) as `ghcr.io/<owner>/<repo>`.
-2. SSHes into the droplet, pulls the image, and restarts the `blog` container
-   on port 80.
+### One-time setup (do this once)
 
-### One-time droplet setup
+1. Repo → **Settings → Pages → Build and deployment → Source → "GitHub
+   Actions"**. (Not "Deploy from a branch".)
+2. Make sure Actions are enabled: **Settings → Actions → General → Allow all
+   actions**.
+3. Merge to `master` (or run the workflow manually from the **Actions** tab via
+   "Run workflow"). First successful run publishes the site.
 
-SSH into the droplet and install Docker:
+Once live: **https://galenightin.github.io/padla/**
 
-```bash
-curl -fsSL https://get.docker.com | sh
+### Base path
+
+This is a *project* Pages site, so it's served under the `/padla/` subpath. That
+is configured in `astro.config.mjs`:
+
+```js
+site: 'https://galenightin.github.io',
+base: '/padla',
 ```
 
-That's all the droplet needs — the workflow handles login, pull, and run. If a
-firewall is enabled, allow HTTP: `ufw allow 80/tcp`.
+Internal links use `import.meta.env.BASE_URL` so they resolve correctly under
+the subpath. **Always link internally with that prefix**, e.g.
+`` `${base}/blog/${id}/` ``, never a bare `/blog/...`.
 
-### GitHub secrets to set
+### Using a custom domain later
 
-Repo → **Settings → Secrets and variables → Actions → New repository secret**:
-
-| Secret             | Required | What it is |
-|--------------------|----------|------------|
-| `DROPLET_HOST`     | yes      | Droplet public IP (or domain), e.g. `203.0.113.10` |
-| `DROPLET_USER`     | yes      | SSH user, e.g. `root` |
-| `DROPLET_SSH_KEY`  | yes      | **Private** SSH key (full PEM text) whose public half is in the droplet's `~/.ssh/authorized_keys` |
-| `DROPLET_SSH_PORT` | no       | SSH port if not `22` |
-| `GHCR_PAT`         | yes\*    | GitHub Personal Access Token with `read:packages`, used by the droplet to pull the image |
-
-\* `GHCR_PAT` is needed only while the GHCR package is **private** (the default).
-If you instead make the package public (repo → Packages → package settings →
-Change visibility → Public), the droplet can pull without it and you can drop
-that secret.
-
-> The build/push step uses the automatic `GITHUB_TOKEN` — no secret needed for
-> that half.
-
-#### Generating the SSH key (if you don't have one)
-
-```bash
-ssh-keygen -t ed25519 -f droplet_key -N ""
-ssh-copy-id -i droplet_key.pub <user>@<droplet-ip>   # or paste the .pub into authorized_keys
-cat droplet_key                                       # private key -> DROPLET_SSH_KEY secret
-```
-
-#### Generating the GHCR PAT
-
-GitHub → **Settings → Developer settings → Personal access tokens → Tokens
-(classic)** → generate one with the `read:packages` scope → put it in
-`GHCR_PAT`.
-
-### Pointing a domain at it
-
-Set an `A` record for your domain to the droplet IP, then update `site` in
-`astro.config.mjs`. For HTTPS, run Caddy or certbot/nginx in front — out of
-scope for this minimal setup.
+Add a `public/CNAME` file containing your domain, set `base: '/'` and
+`site: 'https://yourdomain.com'` in `astro.config.mjs`, and point the domain's
+DNS at GitHub Pages (per GitHub's
+[custom domain docs](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)).
