@@ -18,7 +18,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <li>
           <h2><a href={`${base}/blog/${post.id}/`}>{post.data.title}</a></h2>
           <time datetime={post.data.date.toISOString()}>
-            {post.data.date.toLocaleDateString('en-US', {
+            {post.data.date.toLocaleDateString('ru-RU', {
               year: 'numeric',
               month: 'short',
               day: 'numeric',
