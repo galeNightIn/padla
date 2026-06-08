@@ -127,3 +127,42 @@ pre.astro-code code {
   background: none;
   padding: 0;
 }
+
+/* Tables — Markdown emits a bare <table>; give it borders, padding and a
+   header so benchmark tables are readable. Scrolls horizontally if it can't
+   fit instead of breaking the layout. */
+.table-wrap {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+thead th {
+  background: rgba(127, 127, 127, 0.12);
+  font-weight: 700;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(127, 127, 127, 0.05);
+}
+
+/* Right-align numeric columns (median timings) for easy scanning. */
+td:last-child,
+th:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
